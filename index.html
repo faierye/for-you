@@ -12,11 +12,11 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Helvetica Neue',sans-serif;
+font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
 }
 
 body{
-background:#f4f4f4;
+background:#f2f2f7;
 height:100vh;
 display:flex;
 justify-content:center;
@@ -24,50 +24,55 @@ align-items:center;
 overflow:hidden;
 }
 
-/* screens */
+/* container */
 
-.screen{
-position:absolute;
+.chat{
 width:90%;
 max-width:420px;
-text-align:center;
-transition:opacity 0.6s ease;
+display:flex;
+flex-direction:column;
+gap:16px;
 }
 
-.hidden{
+/* bubble */
+
+.bubble{
+background:white;
+padding:14px 16px;
+border-radius:18px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
 opacity:0;
-pointer-events:none;
+transform:translateY(20px);
+transition:all .5s ease;
 }
 
-.title{
-font-size:20px;
-letter-spacing:1px;
-color:#222;
+.bubble.show{
+opacity:1;
+transform:translateY(0);
 }
 
-.slide-hint{
-margin-top:40px;
-font-size:12px;
-letter-spacing:3px;
+/* hint */
+
+.hint{
+font-size:11px;
+letter-spacing:2px;
 color:#999;
+margin-top:6px;
 }
 
-/* spotify player */
+/* spotify */
 
 iframe{
 border-radius:12px;
-margin-top:20px;
+margin-top:6px;
 }
 
-/* invisible swipe layer */
+/* restart text */
 
-.swipe-layer{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:5;
+.restart{
+font-size:11px;
+color:#888;
+margin-top:6px;
 }
 
 </style>
@@ -75,76 +80,27 @@ z-index:5;
 
 <body>
 
-<!-- SCREEN 1 -->
+<div class="chat">
 
-<div class="screen" id="screen0">
-
-<div class="title">
+<div class="bubble show" id="b0">
 when you're going thru something
+<div class="hint">swipe left →</div>
 </div>
 
-<div class="slide-hint">
-swipe left →
+<div class="bubble" id="b1">
+<iframe src="https://open.spotify.com/embed/track/35yw6wTQcItHtyrbCAQV9L"
+width="100%" height="80" frameborder="0"></iframe>
 </div>
 
+<div class="bubble" id="b2">
+<iframe src="https://open.spotify.com/embed/track/3pGeMszs8vgG4osWUTMEk9"
+width="100%" height="80" frameborder="0"></iframe>
 </div>
 
-<!-- SCREEN 2 -->
-
-<div class="screen hidden" id="screen1">
-
-<div class="swipe-layer"></div>
-
-<iframe
-src="https://open.spotify.com/embed/track/35yw6wTQcItHtyrbCAQV9L"
-width="300"
-height="80"
-frameborder="0"
-allow="encrypted-media">
-</iframe>
-
-<div class="slide-hint">
-swipe →
-</div>
-
-</div>
-
-<!-- SCREEN 3 -->
-
-<div class="screen hidden" id="screen2">
-
-<div class="swipe-layer"></div>
-
-<iframe
-src="https://open.spotify.com/embed/track/3pGeMszs8vgG4osWUTMEk9"
-width="300"
-height="80"
-frameborder="0"
-allow="encrypted-media">
-</iframe>
-
-<div class="slide-hint">
-swipe →
-</div>
-
-</div>
-
-<!-- SCREEN 4 -->
-
-<div class="screen hidden" id="screen3">
-
-<div class="swipe-layer"></div>
-
-<iframe
-src="https://open.spotify.com/embed/track/0IuKNTVgn9vapnGU44natX"
-width="300"
-height="80"
-frameborder="0"
-allow="encrypted-media">
-</iframe>
-
-<div class="slide-hint">
-tap to restart
+<div class="bubble" id="b3">
+<iframe src="https://open.spotify.com/embed/track/0IuKNTVgn9vapnGU44natX"
+width="100%" height="80" frameborder="0"></iframe>
+<div class="restart">tap to restart</div>
 </div>
 
 </div>
@@ -152,54 +108,45 @@ tap to restart
 <script>
 
 let startX = 0
-let currentScreen = 0
-let screens = document.querySelectorAll(".screen")
+let current = 0
+let bubbles = document.querySelectorAll(".bubble")
 
-function nextScreen(){
+function next(){
 
-if(currentScreen < screens.length - 1){
+if(current < bubbles.length - 1){
 
-screens[currentScreen].classList.add("hidden")
-
-currentScreen++
-
-screens[currentScreen].classList.remove("hidden")
+current++
+bubbles[current].classList.add("show")
 
 }
 
 }
 
-/* touch swipe */
-
-document.addEventListener("touchstart",function(e){
-
+document.addEventListener("touchstart",e=>{
 startX = e.touches[0].clientX
-
 })
 
-document.addEventListener("touchend",function(e){
+document.addEventListener("touchend",e=>{
 
 let endX = e.changedTouches[0].clientX
 
 if(startX - endX > 50){
 
-nextScreen()
+next()
 
 }
 
 })
 
-/* click restart */
+document.addEventListener("click",()=>{
 
-document.addEventListener("click",function(){
+if(current === bubbles.length - 1){
 
-if(currentScreen === screens.length - 1){
+bubbles.forEach((b,i)=>{
+if(i!==0)b.classList.remove("show")
+})
 
-screens[currentScreen].classList.add("hidden")
-
-currentScreen = 0
-
-screens[currentScreen].classList.remove("hidden")
+current = 0
 
 }
 
@@ -209,4 +156,3 @@ screens[currentScreen].classList.remove("hidden")
 
 </body>
 </html>
-
