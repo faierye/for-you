@@ -7,103 +7,133 @@
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Helvetica Neue',sans-serif;}
-body {
-    background:#f4f4f4;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
+
+body{
+background:#f4f4f4;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
 }
-.screen {
-    position:absolute;
-    width:90%;
-    max-width:420px;
-    text-align:center;
-    transition:opacity 0.6s ease;
+
+.screen{
+position:absolute;
+width:90%;
+max-width:420px;
+text-align:center;
+transition:opacity 0.6s ease;
 }
-.title {
-    font-size:20px;
-    letter-spacing:1px;
-    color:#222;
+
+.hidden{
+opacity:0;
+pointer-events:none;
 }
-.slide-hint {
-    margin-top:40px;
-    font-size:12px;
-    letter-spacing:3px;
-    color:#999;
+
+.title{
+font-size:20px;
+letter-spacing:1px;
+color:#222;
 }
-.hidden {
-    opacity:0;
-    pointer-events:none;
+
+.slide-hint{
+margin-top:40px;
+font-size:12px;
+letter-spacing:3px;
+color:#999;
 }
-iframe {
-    border-radius:12px;
-    margin-top:20px;
+
+iframe{
+border-radius:12px;
+margin-top:20px;
 }
 </style>
 </head>
+
 <body>
 
-<div class="screen" id="first">
-    <div class="title">
-        when you're going thru something
-    </div>
-    <div class="slide-hint">
-        swipe left →
-    </div>
+<!-- Screen 1 -->
+<div class="screen" id="screen0">
+<div class="title">
+when you're going thru something
 </div>
 
-<div class="screen hidden" id="second">
-    <!-- Spotify Embed -->
-    <iframe src="https://open.spotify.com/embed/track/35yw6wTQcItHtyrbCAQV9L" 
-        width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
-    </iframe>
+<div class="slide-hint">
+swipe left →
+</div>
 </div>
 
-<div class="screen hidden" id="third">
-    <!-- Spotify Embed -->
-    <iframe src="https://open.spotify.com/embed/track/3pGeMszs8vgG4osWUTMEk9" 
-        width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
-    </iframe>
+<!-- Screen 2 -->
+<div class="screen hidden" id="screen1">
+<iframe src="https://open.spotify.com/embed/track/35yw6wTQcItHtyrbCAQV9L"
+width="300" height="80" frameborder="0" allow="encrypted-media">
+</iframe>
 </div>
 
-<div class="screen hidden" id="fourth">
-    <!-- Spotify Embed -->
-    <iframe src="https://open.spotify.com/embed/track/0IuKNTVgn9vapnGU44natX" 
-        width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media">
-    </iframe>
+<!-- Screen 3 -->
+<div class="screen hidden" id="screen2">
+<iframe src="https://open.spotify.com/embed/track/3pGeMszs8vgG4osWUTMEk9"
+width="300" height="80" frameborder="0" allow="encrypted-media">
+</iframe>
+</div>
+
+<!-- Screen 4 -->
+<div class="screen hidden" id="screen3">
+<iframe src="https://open.spotify.com/embed/track/0IuKNTVgn9vapnGU44natX"
+width="300" height="80" frameborder="0" allow="encrypted-media">
+</iframe>
+
+<div class="slide-hint">
+tap to restart
+</div>
 </div>
 
 <script>
-let startX = 0;
-let showingMessage = false;
 
-document.addEventListener("touchstart", function(e) {
-    startX = e.touches[0].clientX;
-});
+let startX = 0
+let currentScreen = 0
+let screens = document.querySelectorAll(".screen")
 
-document.addEventListener("touchend", function(e) {
-    let endX = e.changedTouches[0].clientX;
-    let diff = startX - endX;
+document.addEventListener("touchstart",function(e){
+startX = e.touches[0].clientX
+})
 
-    if(diff > 50 && !showingMessage){
-        document.getElementById("first").classList.add("hidden");
-        document.getElementById("second").classList.remove("hidden");
-        showingMessage = true;
-    }
-});
+document.addEventListener("touchend",function(e){
 
-document.addEventListener("click", function() {
-    if(showingMessage){
-        document.getElementById("second").classList.add("hidden");
-        document.getElementById("first").classList.remove("hidden");
-        showingMessage = false;
-    }
-});
+let endX = e.changedTouches[0].clientX
+let diff = startX - endX
+
+if(diff > 50){
+
+if(currentScreen < screens.length - 1){
+
+screens[currentScreen].classList.add("hidden")
+
+currentScreen++
+
+screens[currentScreen].classList.remove("hidden")
+
+}
+
+}
+
+})
+
+document.addEventListener("click",function(){
+
+if(currentScreen === screens.length - 1){
+
+screens[currentScreen].classList.add("hidden")
+
+currentScreen = 0
+
+screens[currentScreen].classList.remove("hidden")
+
+}
+
+})
+
 </script>
 
 </body>
 </html>
-
-
